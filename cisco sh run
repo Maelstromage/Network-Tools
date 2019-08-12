@@ -1,7 +1,7 @@
 $deviceList = Import-Csv $PSScriptRoot\devices.csv
 $filename ="config"
 $ext =".txt"
-$filepath ="C:\Users\harsch\Box\Berlin\Projects\Document the Network\running config\"
+$filepath =""
 $u1 ="" #username
 $p1 = read-host -Prompt "please input password" -AsSecureString
 $c1 ="sh run"
