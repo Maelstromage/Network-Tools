@@ -1,48 +1,25 @@
-# in order to use SSH you will first need install Posh-SSH
-# More info here https://www.powershellgallery.com/packages/Posh-SSH/2.0.2
-
-# imports a csv file with fist column labled Device and second labled Name
-$deviceList = Import-Csv $PSScriptRoot\devices.csv
-
-# sets the extension of the filename
-$ext =".txt"
-
-# file path where the file will be saved
-$filepath ="C:\Users\harsch\Box\Berlin\Projects\Document the Network\running config\"
-
-# username to log into the switches
-$u1 = Read-Host -Prompt "Please enter the username for the switch"
-
-# asks for the password and makes it a secure string 
-$p1 = read-host -Prompt "please input password" -AsSecureString
-
-# this is the command to be run, it is set to show running configuration so we can get the running config
-$c1 ="sh run"
-
-# gets the date and creates a folder with that name
-$date = Get-Date -Format "MM-dd-yyyy HH.mm"
-New-Item -Path $filepath -Name $date -ItemType "directory"
+$compsList = Import-Csv $PSScriptRoot\devices.csv
 
 
-# this makes a loop for each line that was imported from the csv file 
-foreach($device in $deviceList)
+
+do {
+foreach($device in $compsList)
 {
-       
-    # This opens a new SSH session with a device from the devices csv file
-    New-SshSession $device.Device -Username $u1 -Password ([Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($p1)))
-
-    # This runs our ssh command and puts it into a varible called $Results
-    $Results = Invoke-Sshcommand -Verbose -InvokeOnAll -Command "$c1"
-
-    # This takes the device name from the csv file and puts it into a varible so we can save the name of file as the device name
-    $filename = $device.Name
-
-    # This creates/overwrites a file within our filepath and in the folder we created with the date. 
-    # The name of which is the device name from the csv file. 
-    # The file will be fuled with the output of $results
-    Set-Content $filepath$date\$filename$ext $Results.Result
-
-    # This closes the SSH session
-    Remove-SshSession -RemoveAll
-
+    $test = Test-Connection -computername $device.Device -Quiet -Count 1
+    if($test){
+        Write-Host $device.Device $device.Name "Success" -ForegroundColor "Blue"
+    } else {
+        Write-host $device.Device $device.Name $device.Where "FAILED" -fore Red
+        [console]::beep(500,300)
+    }
+    
 }
+for ($a=0; $a -le 20; $a++){
+    start-sleep 1
+    $b=$a*5
+    Write-Progress -activity "Waiting..." -status "$b%" -PercentComplete $b;
+}
+Clear
+Write-Host "`n`n`n`n`n`n`n`n`n`n`n`n"
+}while ($true)
+
