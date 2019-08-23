@@ -1,3 +1,6 @@
+# in order to use SSH you will first need install Posh-SSH
+# More info here https://www.powershellgallery.com/packages/Posh-SSH/2.0.2
+
 # imports a csv file with fist column labled Device and second labled Name
 $deviceList = Import-Csv $PSScriptRoot\devices.csv
 
@@ -5,10 +8,10 @@ $deviceList = Import-Csv $PSScriptRoot\devices.csv
 $ext =".txt"
 
 # file path where the file will be saved
-$filepath =""
+$filepath ="C:\Users\harsch\Box\Berlin\Projects\Document the Network\running config\"
 
 # username to log into the switches
-$u1 =""
+$u1 = Read-Host -Prompt "Please enter the username for the switch"
 
 # asks for the password and makes it a secure string 
 $p1 = read-host -Prompt "please input password" -AsSecureString
