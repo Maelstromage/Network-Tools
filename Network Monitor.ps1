@@ -14,5 +14,12 @@ foreach($device in $compsList)
     }
     
 }
-Start-Sleep 1
+for ($a=0; $a -le 20; $a++){
+    start-sleep 1
+    $b=$a*5
+    Write-Progress -activity "Waiting..." -status "$b%" -PercentComplete $b;
+}
+Clear
+Write-Host "`n`n`n`n`n`n`n`n`n`n`n`n"
 }while ($true)
+
