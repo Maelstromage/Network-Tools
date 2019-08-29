@@ -1,7 +1,5 @@
 $compsList = Import-Csv $PSScriptRoot\devices.csv
 
-
-
 do {
 foreach($device in $compsList)
 {
@@ -14,12 +12,14 @@ foreach($device in $compsList)
     }
     
 }
+$saveY = [console]::CursorTop
+$saveX = [console]::CursorLeft
 for ($a=0; $a -le 20; $a++){
     start-sleep 1
-    $b=$a*5
-    Write-Progress -activity "Waiting..." -status "$b%" -PercentComplete $b;
+    
+    #Write-Progress -activity "Waiting..." -status "$b%" -PercentComplete $b;
+    [console]::setcursorposition($saveX,$saveY)
+    Write-Host "Waiting" (20-$a) "seconds... "
 }
 Clear
-Write-Host "`n`n`n`n`n`n`n`n`n`n`n`n"
 }while ($true)
-
