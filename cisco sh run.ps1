@@ -8,16 +8,16 @@ $deviceList = Import-Csv $PSScriptRoot\devices.csv
 $ext =".txt"
 
 # file path where the file will be saved
-$filepath ="C:\Users\harsch\Box\Berlin\Projects\Document the Network\running config\"
+$filepath ="\\usblns-file2\Scripts\Network Tools\ssh ssl\logs\"
 
-# username to log into the switches
-$u1 = Read-Host -Prompt "Please enter the username for the switch"
+# Gets Credentials for Switch
+#$creds = Get-Credential
 
-# asks for the password and makes it a secure string 
-$p1 = read-host -Prompt "please input password" -AsSecureString
 
-# this is the command to be run, it is set to show running configuration so we can get the running config
-$c1 ="sh run"
+# these are the command to be run, it is set to show running configuration so we can get the running config
+$c1 = "terminal length 0"
+$c2 = "sh run"
+$c3 = "terminal length 24"
 
 # gets the date and creates a folder with that name
 $date = Get-Date -Format "MM-dd-yyyy HH.mm"
@@ -29,10 +29,18 @@ foreach($device in $deviceList)
 {
        
     # This opens a new SSH session with a device from the devices csv file
-    New-SshSession $device.Device -Username $u1 -Password ([Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($p1)))
+    $session = New-SSHSession -ComputerName $device.Device -Credential $cred –AcceptKey
+    $SSHStream = New-SSHShellStream -Index $session.SessionId
 
     # This runs our ssh command and puts it into a varible called $Results
-    $Results = Invoke-Sshcommand -Verbose -InvokeOnAll -Command "$c1"
+    $SSHStream.WriteLine($c1)
+    sleep 1
+    $SSHStream.WriteLine($c2)
+    sleep 1
+    $SSHStream.WriteLine($c3)
+    sleep 1
+
+
 
     # This takes the device name from the csv file and puts it into a varible so we can save the name of file as the device name
     $filename = $device.Name
@@ -40,9 +48,18 @@ foreach($device in $deviceList)
     # This creates/overwrites a file within our filepath and in the folder we created with the date. 
     # The name of which is the device name from the csv file. 
     # The file will be fuled with the output of $results
-    Set-Content $filepath$date\$filename$ext $Results.Result
+    $results = $sshstream.read() 
+    sleep 1
+
+    Set-Content $filepath$date\$filename$ext $results
+    
 
     # This closes the SSH session
-    Remove-SshSession -RemoveAll
+    Remove-SSHSession -SSHSession $session 
 
 }
+
+
+
+
+ 
