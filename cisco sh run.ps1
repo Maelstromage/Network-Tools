@@ -1,5 +1,5 @@
 # in order to use SSH you will first need install Posh-SSH
-# More info here https://www.powershellgallery.com/packages/Posh-SSH/2.0.2
+# More info here https://www.powershellgallery.com/packages/Posh-SSH
 
 # imports a csv file with fist column labled Device and second labled Name
 $deviceList = Import-Csv $PSScriptRoot\devices.csv
